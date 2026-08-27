@@ -221,6 +221,12 @@
     font-size:11.5px;
     color:var(--ink-soft);
   }
+  .block .place{
+    font-size:11.5px;
+    color:var(--ink);
+    font-weight:600;
+    margin-top:3px;
+  }
   .block .tag{
     display:inline-block;
     margin-top:6px;
@@ -461,136 +467,13 @@ const DAY_ABBR = ["LUN","MAR","MIE","JUE","VIE","SAB","DOM"];
 // day index 0=Lunes ... 6=Domingo. start/end in minutes from 00:00.
 const EVENTS = [
   // ---- UPC ----
-  {day:0, start:420, end:660, cat:"upc", title:"Método de la Investigación Científica", mode:"Presencial", place:"Campus Villa, UPC"},
-  {day:0, start:660, end:780, cat:"upc", title:"Epidemiología para AFD", mode:"Presencial", place:"Campus Villa, UPC"},
-  {day:0, start:960, end:1080, cat:"upc", title:"CTI y Fisioterapia Clínica", mode:"Presencial", place:"Campus Villa, UPC"},
+  {day:0, start:420, end:660, cat:"upc", title:"Método de la Investigación Científica", mode:"Presencial", place:"Aula VH208 — Campus Villa, UPC"},
+  {day:0, start:660, end:780, cat:"upc", title:"Epidemiología para AFD", mode:"Presencial", place:"Aula VE006 — Campus Villa, UPC"},
+  {day:0, start:960, end:1080, cat:"upc", title:"CTI y Fisioterapia Clínica", mode:"Presencial", place:"Campus Villa, UPC (aula por confirmar)"},
 
-  {day:1, start:420, end:660, cat:"upc", title:"Nuevas Tecnologías en Act. Física y Deporte", mode:"Presencial", place:"Campus Villa, UPC"},
-  {day:1, start:780, end:1020, cat:"upc", title:"Método de la Investigación Científica", mode:"Presencial", place:"Campus Villa, UPC"},
+  {day:1, start:420, end:660, cat:"upc", title:"Nuevas Tecnologías en Act. Física y Deporte", mode:"Presencial", place:"Aula VE006 — Campus Villa, UPC"},
+  {day:1, start:780, end:1020, cat:"upc", title:"Método de la Investigación Científica", mode:"Presencial", place:"Aula VH207 — Campus Villa, UPC"},
 
-  {day:2, start:420, end:660, cat:"upc", title:"Nuevas Tecnologías en Act. Física y Deporte", mode:"Presencial", place:"Campus Villa, UPC"},
+  {day:2, start:420, end:660, cat:"upc", title:"Nuevas Tecnologías en Act. Física y Deporte", mode:"Presencial", place:"Aula VE006 — Campus Villa, UPC"},
 
-  {day:3, start:420, end:660, cat:"upc", title:"Epidemiología para AFD", mode:"Presencial", place:"Campus Villa, UPC"},
-  {day:3, start:780, end:1020, cat:"upc", title:"Método de la Investigación Científica", mode:"Presencial", place:"Campus Villa, UPC"},
-
-  {day:4, start:420, end:660, cat:"upc", title:"Taller de Herramientas de Investigación en Salud", mode:"Presencial", place:"Campus Villa, UPC"},
-
-  {day:5, start:420, end:660, cat:"upc", title:"Proyecto de Tesis 2", mode:"Presencial", place:"Campus Villa, UPC"},
-  {day:5, start:660, end:780, cat:"upc", title:"Proyecto de Tesis 1", mode:"Presencial", place:"Campus Villa, UPC"},
-  {day:5, start:840, end:960, cat:"upc", title:"Proyecto de Tesis 1", mode:"Presencial", place:"Campus Villa, UPC"},
-
-  // ---- Continental ----
-  {day:0, start:1140, end:1230, cat:"continental", title:"Ética y Deontología en Tecnología Médica", mode:"Remoto — sección TAS", place:"Universidad Continental (virtual)"},
-  {day:0, start:1230, end:1320, cat:"continental", title:"Ética y Deontología en Tecnología Médica", mode:"Remoto — sección LAS", place:"Universidad Continental (virtual)"},
-
-  {day:1, start:1140, end:1230, cat:"continental", title:"Ética y Deontología en Tecnología Médica", mode:"Remoto — sección TBS", place:"Universidad Continental (virtual)"},
-  {day:1, start:1230, end:1320, cat:"continental", title:"Fisioterapia Basada en Evidencia", mode:"Física — sección TAX", place:"Sede Huancayo, Universidad Continental"},
-
-  {day:2, start:1140, end:1230, cat:"continental", title:"Ética y Deontología en Tecnología Médica", mode:"Remoto — sección TCS", place:"Universidad Continental (virtual)"},
-  {day:2, start:1230, end:1320, cat:"continental", title:"Ética y Deontología en Tecnología Médica", mode:"Remoto — sección TDS", place:"Universidad Continental (virtual)"},
-
-  // ---- Wiener ----
-  {day:1, start:1320, end:1365, cat:"wiener", title:"Ergonomía y Salud Ocupacional — Teoría", mode:"Remoto / videoconferencia", place:"Sede Virtual, Wiener"},
-
-  {day:5, start:1095, end:1140, cat:"wiener", title:"Prácticas en Fisioterapia I", mode:"Presencial", place:"Aula WA804, Local 4 — Wiener"},
-  {day:5, start:1140, end:1185, cat:"wiener", title:"Prácticas en Fisioterapia I", mode:"Presencial", place:"Aula WA804, Local 4 — Wiener"},
-  {day:5, start:1185, end:1230, cat:"wiener", title:"Prácticas en Fisioterapia I", mode:"Presencial", place:"Aula WT706, Local 1 — Wiener"},
-  {day:5, start:1230, end:1275, cat:"wiener", title:"Prácticas en Fisioterapia I", mode:"Presencial", place:"Aula WT706, Local 1 — Wiener"},
-  {day:5, start:1275, end:1320, cat:"wiener", title:"Ergonomía y Salud Ocupacional — Práctica 3", mode:"Presencial", place:"Aula WT905, Local 1 — Wiener"},
-  {day:5, start:1320, end:1365, cat:"wiener", title:"Ergonomía y Salud Ocupacional — Práctica 3", mode:"Presencial", place:"Aula WT905, Local 1 — Wiener"},
-
-  // ---- Familia ----
-  {day:6, start:420, end:1080, cat:"familia", title:"Cuidado de hijos", mode:"Compromiso personal", place:"—"},
-];
-
-const CAT_LABEL = {upc:"UPC", continental:"Continental", wiener:"Wiener", familia:"Familia"};
-
-function fmt(mins){
-  const h = Math.floor(mins/60), m = mins%60;
-  return String(h).padStart(2,'0')+":"+String(m).padStart(2,'0');
-}
-function hours(mins){ return (mins/60); }
-
-function dayTotalMinutes(d){
-  return EVENTS.filter(e=>e.day===d).reduce((s,e)=>s+(e.end-e.start),0);
-}
-
-let currentDay = 0;
-
-function buildTabs(){
-  const wrap = document.getElementById('dayTabs');
-  wrap.innerHTML = '';
-  DAYS.forEach((name,i)=>{
-    const mins = dayTotalMinutes(i);
-    const tab = document.createElement('div');
-    tab.className = 'day-tab' + (i===currentDay?' active':'') + (mins===0?' free':'');
-    tab.innerHTML = `<span class="d-name">${DAY_ABBR[i]}</span><span class="d-hours">${mins===0?'libre':hours(mins).toFixed(1)+'h'}</span>`;
-    tab.addEventListener('click', ()=>{ currentDay = i; render(); });
-    wrap.appendChild(tab);
-  });
-}
-
-function render(){
-  buildTabs();
-  document.getElementById('dayTitle').textContent = DAYS[currentDay];
-  const totalMin = dayTotalMinutes(currentDay);
-  document.getElementById('dayTotal').textContent = totalMin===0 ? 'Día libre' : hours(totalMin).toFixed(1)+' h';
-
-  const tl = document.getElementById('timeline');
-  tl.innerHTML = '';
-
-  const dayEvents = EVENTS.filter(e=>e.day===currentDay).sort((a,b)=>a.start-b.start);
-
-  if(dayEvents.length===0){
-    const empty = document.createElement('div');
-    empty.className = 'empty-day';
-    empty.innerHTML = `<span class="big">Sin actividades programadas</span>Espacio disponible para preparación de clases o investigación.`;
-    tl.appendChild(empty);
-    return;
-  }
-
-  dayEvents.forEach(ev=>{
-    const row = document.createElement('div');
-    row.className = 'row';
-    row.innerHTML = `
-      <div class="rail" style="--dotcolor:var(--${ev.cat})">
-        <div class="line"></div>
-        <div class="dot" style="border-color:var(--${ev.cat})"></div>
-      </div>
-      <div class="block ${ev.cat}">
-        <div class="time-range">${fmt(ev.start)} – ${fmt(ev.end)}</div>
-        <div class="title">${ev.title}</div>
-        <div class="meta">${ev.mode}</div>
-        <span class="tag">${CAT_LABEL[ev.cat]}</span>
-      </div>
-    `;
-    row.querySelector('.block').addEventListener('click', ()=>openSheet(ev));
-    tl.appendChild(row);
-  });
-}
-
-// ---------- Bottom sheet ----------
-const scrim = document.getElementById('scrim');
-const sheet = document.getElementById('sheet');
-
-function openSheet(ev){
-  document.getElementById('sheetTag').textContent = CAT_LABEL[ev.cat];
-  document.getElementById('sheetTag').style.background = getComputedStyle(document.documentElement).getPropertyValue('--'+ev.cat);
-  document.getElementById('sheetTitle').textContent = ev.title;
-  document.getElementById('sheetTime').textContent = `${DAYS[ev.day]}, ${fmt(ev.start)} – ${fmt(ev.end)}`;
-  document.getElementById('sheetMode').textContent = ev.mode;
-  document.getElementById('sheetPlace').textContent = ev.place;
-  scrim.classList.add('show');
-  sheet.classList.add('show');
-}
-function closeSheet(){
-  scrim.classList.remove('show');
-  sheet.classList.remove('show');
-}
-scrim.addEventListener('click', closeSheet);
-document.getElementById('sheetClose').addEventListener('click', closeSheet);
-
-render();
-</script>
-</body>
-</html>
+  {day:3, start:420, end:660, cat:"upc", title:"Epidemiología para AFD", mode:"Presencial", place:"Aula VE006 — Campus Villa, UPC"},

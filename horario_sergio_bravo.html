@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Cartilla de horario — Sergio Bravo Cucci</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --paper:#F5F2EA;
+    --paper-raised:#FFFFFF;
+    --ink:#1C2B29;
+    --ink-soft:#5B6D69;
+    --line:#DAD4C4;
+    --teal:#2F6E62;
+    --teal-dark:#1F4C44;
+
+    --upc:#4C6FA5;
+    --upc-bg:#E7ECF5;
+    --wiener:#C1793D;
+    --wiener-bg:#F6E9DC;
+    --continental:#5C8A52;
+    --continental-bg:#E7F0E3;
+    --familia:#A65475;
+    --familia-bg:#F3E3EB;
+
+    --radius:14px;
+    --shadow: 0 1px 2px rgba(28,43,41,0.06), 0 6px 16px rgba(28,43,41,0.06);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    background:var(--paper);
+    position:relative;
+    padding-bottom:28px;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    padding:28px 20px 18px;
+    border-bottom:1px solid var(--line);
+    background:
+      linear-gradient(180deg, rgba(47,110,98,0.05), rgba(47,110,98,0) 60%);
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--teal-dark);
+    font-weight:500;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px;height:7px;border-radius:50%;
+    background:var(--teal);
+    display:inline-block;
+    box-shadow:0 0 0 3px rgba(47,110,98,0.15);
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:26px;
+    line-height:1.15;
+    margin:8px 0 4px;
+    letter-spacing:-0.01em;
+  }
+  .subtitle{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin:0;
+  }
+
+  /* ---------- Day tabs ---------- */
+  .day-tabs{
+    display:flex;
+    gap:6px;
+    padding:14px 14px 4px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+  }
+  .day-tabs::-webkit-scrollbar{display:none;}
+  .day-tab{
+    flex:0 0 auto;
+    padding:9px 12px 8px;
+    border-radius:11px;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    text-align:center;
+    cursor:pointer;
+    transition:all .15s ease;
+    min-width:52px;
+    user-select:none;
+  }
+  .day-tab .d-name{
+    display:block;
+    font-weight:700;
+    letter-spacing:0.03em;
+    color:var(--ink);
+    margin-bottom:3px;
+  }
+  .day-tab .d-hours{
+    display:block;
+    font-size:10px;
+    color:var(--ink-soft);
+  }
+  .day-tab.active{
+    background:var(--teal-dark);
+    border-color:var(--teal-dark);
+  }
+  .day-tab.active .d-name, .day-tab.active .d-hours{ color:#F0EEE6; }
+  .day-tab.free{ opacity:0.55; }
+
+  /* ---------- Timeline ---------- */
+  .timeline-wrap{
+    padding:10px 20px 4px;
+  }
+  .day-heading{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin:14px 0 10px;
+  }
+  .day-heading h2{
+    font-family:'Fraunces', serif;
+    font-size:19px;
+    font-weight:600;
+    margin:0;
+  }
+  .day-heading .total{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+
+  .timeline{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .row{
+    display:flex;
+    align-items:stretch;
+    gap:10px;
+  }
+  .row .rail{
+    flex:0 0 auto;
+    width:14px;
+    position:relative;
+    display:flex;
+    justify-content:center;
+  }
+  .row .rail .line{
+    position:absolute;
+    top:16px;
+    bottom:-10px;
+    width:1px;
+    background:repeating-linear-gradient(
+      to bottom,
+      var(--line) 0px, var(--line) 3px, transparent 3px, transparent 7px
+    );
+  }
+  .row:last-child .rail .line{ display:none; }
+  .row .rail .dot{
+    margin-top:13px;
+    width:9px; height:9px;
+    border-radius:50%;
+    background:var(--paper);
+    border:2px solid var(--dotcolor, var(--teal));
+    flex:0 0 auto;
+    z-index:1;
+  }
+
+  .block{
+    flex:1 1 auto;
+    min-width:0;
+    border-radius:12px;
+    padding:10px 12px 11px 14px;
+    box-shadow:var(--shadow);
+    cursor:pointer;
+    border-left:4px solid transparent;
+    transition:transform .12s ease;
+  }
+  .block:active{ transform:scale(0.98); }
+  .block .time-range{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    color:var(--ink-soft);
+    margin-bottom:3px;
+    letter-spacing:0.01em;
+  }
+  .block .title{
+    font-size:13.5px;
+    font-weight:600;
+    line-height:1.3;
+    margin-bottom:2px;
+  }
+  .block .meta{
+    font-size:11.5px;
+    color:var(--ink-soft);
+  }
+  .block .tag{
+    display:inline-block;
+    margin-top:6px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:2px 7px;
+    border-radius:20px;
+    font-weight:700;
+  }
+
+  .block.upc{ background:var(--upc-bg); border-left-color:var(--upc); --dotcolor:var(--upc);}
+  .block.upc .tag{ background:var(--upc); color:#fff; }
+  .block.continental{ background:var(--continental-bg); border-left-color:var(--continental); --dotcolor:var(--continental);}
+  .block.continental .tag{ background:var(--continental); color:#fff; }
+  .block.wiener{ background:var(--wiener-bg); border-left-color:var(--wiener); --dotcolor:var(--wiener);}
+  .block.wiener .tag{ background:var(--wiener); color:#fff; }
+  .block.familia{ background:var(--familia-bg); border-left-color:var(--familia); --dotcolor:var(--familia);}
+  .block.familia .tag{ background:var(--familia); color:#fff; }
+
+  .empty-day{
+    padding:34px 8px 30px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13px;
+  }
+  .empty-day .big{
+    font-family:'Fraunces', serif;
+    font-size:17px;
+    color:var(--ink);
+    display:block;
+    margin-bottom:4px;
+  }
+
+  /* ---------- Summary card ---------- */
+  .summary{
+    margin:22px 20px 0;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px 16px 14px;
+    box-shadow:var(--shadow);
+  }
+  .summary h3{
+    font-family:'Fraunces', serif;
+    font-size:15px;
+    font-weight:600;
+    margin:0 0 12px;
+  }
+  .summary-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:7px 0;
+    border-top:1px solid var(--line);
+    font-size:12.5px;
+  }
+  .summary-row:first-of-type{ border-top:none; }
+  .summary-row .lbl{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:var(--ink);
+    font-weight:500;
+  }
+  .dot{ width:9px;height:9px;border-radius:50%; flex:0 0 auto; }
+  .dot.upc{background:var(--upc);}
+  .dot.wiener{background:var(--wiener);}
+  .dot.continental{background:var(--continental);}
+  .dot.familia{background:var(--familia);}
+  .summary-row .val{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+    color:var(--ink-soft);
+  }
+  .summary-total{
+    margin-top:10px;
+    padding-top:12px;
+    border-top:1px solid var(--ink);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .summary-total .lbl{ font-weight:700; font-size:13.5px; }
+  .summary-total .val{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+    font-size:16px;
+    color:var(--teal-dark);
+  }
+  .summary-note{
+    font-size:10.5px;
+    color:var(--ink-soft);
+    margin-top:10px;
+    line-height:1.4;
+  }
+
+  footer{
+    text-align:center;
+    padding:22px 20px 6px;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    font-family:'JetBrains Mono', monospace;
+  }
+
+  /* ---------- Bottom sheet ---------- */
+  .scrim{
+    position:fixed; inset:0;
+    background:rgba(28,43,41,0.35);
+    opacity:0; pointer-events:none;
+    transition:opacity .2s ease;
+    z-index:40;
+  }
+  .scrim.show{ opacity:1; pointer-events:auto; }
+
+  .sheet{
+    position:fixed;
+    left:50%;
+    bottom:0;
+    transform:translate(-50%, 100%);
+    width:100%;
+    max-width:480px;
+    background:var(--paper-raised);
+    border-radius:20px 20px 0 0;
+    box-shadow:0 -8px 30px rgba(28,43,41,0.25);
+    padding:10px 22px 26px;
+    transition:transform .25s cubic-bezier(.32,.72,0,1);
+    z-index:41;
+  }
+  .sheet.show{ transform:translate(-50%, 0); }
+  .sheet .grabber{
+    width:36px; height:4px; border-radius:2px;
+    background:var(--line);
+    margin:6px auto 16px;
+  }
+  .sheet .sheet-tag{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:3px 9px;
+    border-radius:20px;
+    font-weight:700;
+    color:#fff;
+    margin-bottom:10px;
+  }
+  .sheet h3{
+    font-family:'Fraunces', serif;
+    font-size:19px;
+    font-weight:600;
+    margin:0 0 10px;
+    line-height:1.25;
+  }
+  .sheet-row{
+    display:flex;
+    gap:10px;
+    padding:8px 0;
+    border-top:1px solid var(--line);
+    font-size:13px;
+  }
+  .sheet-row:first-of-type{ border-top:none; }
+  .sheet-row .k{
+    width:88px;
+    flex:0 0 auto;
+    color:var(--ink-soft);
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    padding-top:1px;
+  }
+  .sheet-row .v{ font-weight:500; }
+  .sheet-close{
+    margin-top:16px;
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:11px;
+    background:var(--teal-dark);
+    color:#F0EEE6;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    cursor:pointer;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="eyebrow">Cartilla de horario</div>
+    <h1>Semana docente</h1>
+    <p class="subtitle">Sergio Bravo Cucci — UPC · Wiener · Continental</p>
+  </header>
+
+  <nav class="day-tabs" id="dayTabs"></nav>
+
+  <div class="timeline-wrap">
+    <div class="day-heading">
+      <h2 id="dayTitle">Lunes</h2>
+      <span class="total" id="dayTotal">0.0 h</span>
+    </div>
+    <div class="timeline" id="timeline"></div>
+  </div>
+
+  <div class="summary">
+    <h3>Resumen semanal</h3>
+    <div class="summary-row"><span class="lbl"><span class="dot upc"></span>UPC</span><span class="val">40.0 h</span></div>
+    <div class="summary-row"><span class="lbl"><span class="dot continental"></span>Continental</span><span class="val">9.0 h</span></div>
+    <div class="summary-row"><span class="lbl"><span class="dot wiener"></span>Wiener</span><span class="val">5.25 h</span></div>
+    <div class="summary-row"><span class="lbl"><span class="dot familia"></span>Cuidado de hijos</span><span class="val">11.0 h</span></div>
+    <div class="summary-total">
+      <span class="lbl">Total ocupado / semana</span>
+      <span class="val">65.25 h</span>
+    </div>
+    <p class="summary-note">De las 65.25 h, 54.25 h corresponden a docencia (UPC + Wiener + Continental) y 11 h al cuidado de hijos los domingos. No incluye preparación de clases, corrección ni trabajo de investigación fuera de horario.</p>
+  </div>
+
+  <footer>Semana de referencia: 24–30 ago. 2026 · Periodo 202620</footer>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet">
+  <div class="grabber"></div>
+  <span class="sheet-tag" id="sheetTag"></span>
+  <h3 id="sheetTitle"></h3>
+  <div class="sheet-row"><span class="k">Horario</span><span class="v" id="sheetTime"></span></div>
+  <div class="sheet-row"><span class="k">Modalidad</span><span class="v" id="sheetMode"></span></div>
+  <div class="sheet-row"><span class="k">Lugar</span><span class="v" id="sheetPlace"></span></div>
+  <button class="sheet-close" id="sheetClose">Cerrar</button>
+</div>
+
+<script>
+const DAYS = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
+const DAY_ABBR = ["LUN","MAR","MIE","JUE","VIE","SAB","DOM"];
+
+// day index 0=Lunes ... 6=Domingo. start/end in minutes from 00:00.
+const EVENTS = [
+  // ---- UPC ----
+  {day:0, start:420, end:660, cat:"upc", title:"Método de la Investigación Científica", mode:"Presencial", place:"Campus Villa, UPC"},
+  {day:0, start:660, end:780, cat:"upc", title:"Epidemiología para AFD", mode:"Presencial", place:"Campus Villa, UPC"},
+  {day:0, start:960, end:1080, cat:"upc", title:"CTI y Fisioterapia Clínica", mode:"Presencial", place:"Campus Villa, UPC"},
+
+  {day:1, start:420, end:660, cat:"upc", title:"Nuevas Tecnologías en Act. Física y Deporte", mode:"Presencial", place:"Campus Villa, UPC"},
+  {day:1, start:780, end:1020, cat:"upc", title:"Método de la Investigación Científica", mode:"Presencial", place:"Campus Villa, UPC"},
+
+  {day:2, start:420, end:660, cat:"upc", title:"Nuevas Tecnologías en Act. Física y Deporte", mode:"Presencial", place:"Campus Villa, UPC"},
+
+  {day:3, start:420, end:660, cat:"upc", title:"Epidemiología para AFD", mode:"Presencial", place:"Campus Villa, UPC"},
+  {day:3, start:780, end:1020, cat:"upc", title:"Método de la Investigación Científica", mode:"Presencial", place:"Campus Villa, UPC"},
+
+  {day:4, start:420, end:660, cat:"upc", title:"Taller de Herramientas de Investigación en Salud", mode:"Presencial", place:"Campus Villa, UPC"},
+
+  {day:5, start:420, end:660, cat:"upc", title:"Proyecto de Tesis 2", mode:"Presencial", place:"Campus Villa, UPC"},
+  {day:5, start:660, end:780, cat:"upc", title:"Proyecto de Tesis 1", mode:"Presencial", place:"Campus Villa, UPC"},
+  {day:5, start:840, end:960, cat:"upc", title:"Proyecto de Tesis 1", mode:"Presencial", place:"Campus Villa, UPC"},
+
+  // ---- Continental ----
+  {day:0, start:1140, end:1230, cat:"continental", title:"Ética y Deontología en Tecnología Médica", mode:"Remoto — sección TAS", place:"Universidad Continental (virtual)"},
+  {day:0, start:1230, end:1320, cat:"continental", title:"Ética y Deontología en Tecnología Médica", mode:"Remoto — sección LAS", place:"Universidad Continental (virtual)"},
+
+  {day:1, start:1140, end:1230, cat:"continental", title:"Ética y Deontología en Tecnología Médica", mode:"Remoto — sección TBS", place:"Universidad Continental (virtual)"},
+  {day:1, start:1230, end:1320, cat:"continental", title:"Fisioterapia Basada en Evidencia", mode:"Física — sección TAX", place:"Sede Huancayo, Universidad Continental"},
+
+  {day:2, start:1140, end:1230, cat:"continental", title:"Ética y Deontología en Tecnología Médica", mode:"Remoto — sección TCS", place:"Universidad Continental (virtual)"},
+  {day:2, start:1230, end:1320, cat:"continental", title:"Ética y Deontología en Tecnología Médica", mode:"Remoto — sección TDS", place:"Universidad Continental (virtual)"},
+
+  // ---- Wiener ----
+  {day:1, start:1320, end:1365, cat:"wiener", title:"Ergonomía y Salud Ocupacional — Teoría", mode:"Remoto / videoconferencia", place:"Sede Virtual, Wiener"},
+
+  {day:5, start:1095, end:1140, cat:"wiener", title:"Prácticas en Fisioterapia I", mode:"Presencial", place:"Aula WA804, Local 4 — Wiener"},
+  {day:5, start:1140, end:1185, cat:"wiener", title:"Prácticas en Fisioterapia I", mode:"Presencial", place:"Aula WA804, Local 4 — Wiener"},
+  {day:5, start:1185, end:1230, cat:"wiener", title:"Prácticas en Fisioterapia I", mode:"Presencial", place:"Aula WT706, Local 1 — Wiener"},
+  {day:5, start:1230, end:1275, cat:"wiener", title:"Prácticas en Fisioterapia I", mode:"Presencial", place:"Aula WT706, Local 1 — Wiener"},
+  {day:5, start:1275, end:1320, cat:"wiener", title:"Ergonomía y Salud Ocupacional — Práctica 3", mode:"Presencial", place:"Aula WT905, Local 1 — Wiener"},
+  {day:5, start:1320, end:1365, cat:"wiener", title:"Ergonomía y Salud Ocupacional — Práctica 3", mode:"Presencial", place:"Aula WT905, Local 1 — Wiener"},
+
+  // ---- Familia ----
+  {day:6, start:420, end:1080, cat:"familia", title:"Cuidado de hijos", mode:"Compromiso personal", place:"—"},
+];
+
+const CAT_LABEL = {upc:"UPC", continental:"Continental", wiener:"Wiener", familia:"Familia"};
+
+function fmt(mins){
+  const h = Math.floor(mins/60), m = mins%60;
+  return String(h).padStart(2,'0')+":"+String(m).padStart(2,'0');
+}
+function hours(mins){ return (mins/60); }
+
+function dayTotalMinutes(d){
+  return EVENTS.filter(e=>e.day===d).reduce((s,e)=>s+(e.end-e.start),0);
+}
+
+let currentDay = 0;
+
+function buildTabs(){
+  const wrap = document.getElementById('dayTabs');
+  wrap.innerHTML = '';
+  DAYS.forEach((name,i)=>{
+    const mins = dayTotalMinutes(i);
+    const tab = document.createElement('div');
+    tab.className = 'day-tab' + (i===currentDay?' active':'') + (mins===0?' free':'');
+    tab.innerHTML = `<span class="d-name">${DAY_ABBR[i]}</span><span class="d-hours">${mins===0?'libre':hours(mins).toFixed(1)+'h'}</span>`;
+    tab.addEventListener('click', ()=>{ currentDay = i; render(); });
+    wrap.appendChild(tab);
+  });
+}
+
+function render(){
+  buildTabs();
+  document.getElementById('dayTitle').textContent = DAYS[currentDay];
+  const totalMin = dayTotalMinutes(currentDay);
+  document.getElementById('dayTotal').textContent = totalMin===0 ? 'Día libre' : hours(totalMin).toFixed(1)+' h';
+
+  const tl = document.getElementById('timeline');
+  tl.innerHTML = '';
+
+  const dayEvents = EVENTS.filter(e=>e.day===currentDay).sort((a,b)=>a.start-b.start);
+
+  if(dayEvents.length===0){
+    const empty = document.createElement('div');
+    empty.className = 'empty-day';
+    empty.innerHTML = `<span class="big">Sin actividades programadas</span>Espacio disponible para preparación de clases o investigación.`;
+    tl.appendChild(empty);
+    return;
+  }
+
+  dayEvents.forEach(ev=>{
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `
+      <div class="rail" style="--dotcolor:var(--${ev.cat})">
+        <div class="line"></div>
+        <div class="dot" style="border-color:var(--${ev.cat})"></div>
+      </div>
+      <div class="block ${ev.cat}">
+        <div class="time-range">${fmt(ev.start)} – ${fmt(ev.end)}</div>
+        <div class="title">${ev.title}</div>
+        <div class="meta">${ev.mode}</div>
+        <span class="tag">${CAT_LABEL[ev.cat]}</span>
+      </div>
+    `;
+    row.querySelector('.block').addEventListener('click', ()=>openSheet(ev));
+    tl.appendChild(row);
+  });
+}
+
+// ---------- Bottom sheet ----------
+const scrim = document.getElementById('scrim');
+const sheet = document.getElementById('sheet');
+
+function openSheet(ev){
+  document.getElementById('sheetTag').textContent = CAT_LABEL[ev.cat];
+  document.getElementById('sheetTag').style.background = getComputedStyle(document.documentElement).getPropertyValue('--'+ev.cat);
+  document.getElementById('sheetTitle').textContent = ev.title;
+  document.getElementById('sheetTime').textContent = `${DAYS[ev.day]}, ${fmt(ev.start)} – ${fmt(ev.end)}`;
+  document.getElementById('sheetMode').textContent = ev.mode;
+  document.getElementById('sheetPlace').textContent = ev.place;
+  scrim.classList.add('show');
+  sheet.classList.add('show');
+}
+function closeSheet(){
+  scrim.classList.remove('show');
+  sheet.classList.remove('show');
+}
+scrim.addEventListener('click', closeSheet);
+document.getElementById('sheetClose').addEventListener('click', closeSheet);
+
+render();
+</script>
+</body>
+</html>
